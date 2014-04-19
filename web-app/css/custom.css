@@ -1,0 +1,58 @@
+.update-wrapper { 
+	margin-top:20px; 
+	background-color:rgba(193, 222, 230, 0.075); 
+	padding: 16px; 
+	border: 1px #e3e3e3; 
+}
+.feed-wrapper { 
+	margin-top:20px; 
+	background-color:rgba(193, 222, 230, 0.075); 
+	padding: 16px; 
+	border: 1px #e3e3e3;
+	border-bottom: 1px solid rgb(224, 229, 238);
+}
+
+.divider-wrapper { border-top: 1px solid rgb(206, 218, 233); }
+
+.heading-wrapper {
+	font-size: 21px;
+	font-weight: 200;
+	line-height: 10px;
+	color: #05497a;
+}
+
+.msg-class {
+	background: linear-gradient(180deg, rgb(255, 255, 255), rgb(233, 233, 233));
+	font-family: monospace;
+	cursor: pointer;
+}
+
+.feed-class {
+	background: linear-gradient(180deg, rgb(255, 255, 255), rgb(204, 204, 204));
+	font-style: italic;
+	font-family: serif;
+}
+.news-class {
+	background: linear-gradient(180deg, rgb(255, 255, 255), rgb(204, 204, 204));
+	//font-style: italic;
+	font-family: serif;
+}
+.approve-class {
+	font-family: monospace;
+	//cursor: pointer;
+}
+.feed-class a {
+	color:#5681B9;
+}
+.news-class a {
+	color:#5681B9;
+}
+.date-class {
+	font:14px Georgia,times,sans-serif;
+	color: grey;
+}
+.user-class {
+	padding-top: 15px;
+	padding-bottom: 15px;
+	color: white;
+}
