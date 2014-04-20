@@ -22,8 +22,8 @@
 	<g:else>
 
 	<br/>
-	<h4><g:message code='spring.security.ui.forgotPassword.description'/></h4>
-
+	<%--<h4><g:message code='spring.security.ui.forgotPassword.description'/></h4>
+	--%><h4>Enter your username(e-mail) and we'll send a link to reset your password.</h4>
 	<table>
 		<tr>
 			<td><label for="username"><g:message code='spring.security.ui.forgotPassword.username'/></label></td>
