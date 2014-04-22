@@ -178,6 +178,19 @@ the explicit tags above and edit those, not the taglib code.
 					</sec:access>
 					</ul>
 				</li>
+				<li><a class="accessible">Utils</a>
+					<ul>
+					<sec:access controller='modules'>
+					<li><g:link controller='modules'>Modules & Functions</g:link></li>
+					</sec:access>
+					<sec:access controller='userType'>
+					<li><g:link controller='userType'>User Types</g:link></li>
+					</sec:access>
+					<sec:access controller='securityQuestions'>
+					<li><g:link controller='securityQuestions'>Security Questions</g:link></li>
+					</sec:access>
+					</ul>
+				</li>
 			</ul>
 
 			<div id='s2ui_header_body'>

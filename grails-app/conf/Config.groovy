@@ -116,6 +116,6 @@ grails.plugin.springsecurity.securityConfigType = 'Requestmap'
 
 grails.plugin.springsecurity.logout.postOnly = false
 
-grails.plugin.springsecurity.rememberMe.persistent = true
-grails.plugin.springsecurity.rememberMe.persistentToken.domainClassName = 'com.security.PersistentLogin'
+//grails.plugin.springsecurity.rememberMe.persistent = true
+//grails.plugin.springsecurity.rememberMe.persistentToken.domainClassName = 'com.security.PersistentLogin'
 

@@ -26,18 +26,24 @@
 			<td><input type="password" name="j_password" id="password" size="20" /></td>
 		</tr>
 		<tr>
-			<td colspan='2'>
-				<input type="checkbox" class="checkbox" name="${rememberMeParameter}" id="remember_me" checked="checked" />
+			<td>&nbsp;</td>
+			<td>
+				<%--<input type="checkbox" class="checkbox" name="${rememberMeParameter}" id="remember_me" checked="checked" />
 				<label for='remember_me'><g:message code='spring.security.ui.login.rememberme'/></label> |
-				<span class="forgot-link">
-					<g:link controller='register' action='forgotPassword'><g:message code='spring.security.ui.login.forgotPassword'/></g:link>
-				</span>
+				--%>
+				<s2ui:submitButton elementId='loginButton' form='loginForm' messageCode='spring.security.ui.login.login'/>
 			</td>
 		</tr>
 		<tr>
 			<td colspan='2'>
-				<s2ui:linkButton elementId='register' controller='register' messageCode='spring.security.ui.login.register'/>
-				<s2ui:submitButton elementId='loginButton' form='loginForm' messageCode='spring.security.ui.login.login'/>
+				<%--<s2ui:linkButton elementId='register' controller='register' messageCode='spring.security.ui.login.register'/>
+				--%>
+				<span class="forgot-link">
+					<g:link controller='register' action='index'>Sign Up</g:link>
+				</span>&nbsp;|&nbsp;
+				<span class="forgot-link">
+					<g:link controller='register' action='forgotPassword'><g:message code='spring.security.ui.login.forgotPassword'/></g:link>
+				</span>
 			</td>
 		</tr>
 	</table>

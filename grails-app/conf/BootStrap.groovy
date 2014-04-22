@@ -11,10 +11,10 @@ class BootStrap {
 		def staffRole = Role.findByAuthority("ROLE_STAFF")?: new Role(authority: 'ROLE_STAFF').save(flush: true)
 		def patientRole = Role.findByAuthority("ROLE_PATIENT")?: new Role(authority: 'ROLE_PATIENT').save(flush: true)
   
-		def testUser = new User(username: 'admin', password: 'admin').save(flush: true)
-		def testUser1 = new User(username: 'doctor', password: 'doctor').save(flush: true)
-		def testUser2 = new User(username: 'staff', password: 'staff').save(flush: true)
-		def testUser3 = new User(username: 'patient', password: 'patient').save(flush: true)
+		def testUser = new User(username: 'admin', password: 'admin', type: 'admin').save(flush: true, failOnError: true)
+		def testUser1 = new User(username: 'doctor', password: 'doctor', type: 'doctor').save(flush: true)
+		def testUser2 = new User(username: 'staff', password: 'staff', type: 'staff').save(flush: true)
+		def testUser3 = new User(username: 'patient', password: 'patient', type: 'patient').save(flush: true)
   
 		UserRole.create testUser, adminRole, true
 		UserRole.create testUser1, doctorRole, true
@@ -53,6 +53,10 @@ class BootStrap {
 		new Requestmap(url: '/role/create', configAttribute: 'ROLE_ADMIN').save(flush: true)
 		new Requestmap(url: '/role/edit', configAttribute: 'ROLE_ADMIN').save(flush: true)
 		new Requestmap(url: '/requestmap/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
+		new Requestmap(url: '/modules/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
+		new Requestmap(url: '/functions/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
+		new Requestmap(url: '/userType/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
+		new Requestmap(url: '/securityQuestions/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
 		
     }
     def destroy = {
