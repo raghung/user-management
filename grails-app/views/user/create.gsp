@@ -29,7 +29,14 @@ tabData << [name: 'roles',    icon: 'icon_role', messageCode: 'spring.security.u
 
 			<s2ui:passwordFieldRow name='password' labelCode='user.password.label' bean="${user}"
                                 labelCodeDefault='Password' value="${user?.password}"/>
-
+			<s2ui:textFieldRow name='firstname' labelCode='user.firstname.label' bean="${user}"
+                            labelCodeDefault='First name' value="${user?.firstname}"/>
+            <s2ui:textFieldRow name='lastname' labelCode='user.lastname.label' bean="${user}"
+                            labelCodeDefault='Last name' value="${user?.lastname}"/>
+			<s2ui:textFieldRow name='type' labelCode='user.type.label' bean="${user}"
+                            labelCodeDefault='Type' value="${user?.type}"/>
+			<s2ui:textFieldRow name='identification' labelCode='user.identification.label' bean="${user}"
+                            labelCodeDefault='Identification' value="${user?.identification}"/>
 			<s2ui:checkboxRow name='enabled' labelCode='user.enabled.label' bean="${user}"
                            labelCodeDefault='Enabled' value="${user?.enabled}"/>
 

@@ -9,4 +9,8 @@ class UserType {
 		name blank: false, unique: true
 		description blank: false
     }
+	
+	String toString() {
+		return "${name}"
+	}
 }

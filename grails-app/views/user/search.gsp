@@ -9,7 +9,7 @@
 
 <div>
 
-	<s2ui:form width='100%' height='375' elementId='formContainer'
+	<s2ui:form width='100%' height='450' elementId='formContainer'
 	           titleCode='spring.security.ui.user.search'>
 
 	<g:form action='userSearch' name='userSearchForm'>
@@ -22,6 +22,26 @@
 			<tr>
 				<td><g:message code='user.username.label' default='Username'/>:</td>
 				<td colspan='3'><g:textField name='username' size='50' maxlength='255' autocomplete='off' value='${username}'/></td>
+			</tr>
+			<tr>
+				<td><g:message code='user.firstname.label' default='First name'/>:</td>
+				<td colspan='3'><g:textField name='firstname' size='50' maxlength='255' autocomplete='off' value='${firstname}'/></td>
+			</tr>
+			<tr>
+				<td><g:message code='user.lastname.label' default='Last name'/>:</td>
+				<td colspan='3'><g:textField name='lastname' size='50' maxlength='255' autocomplete='off' value='${lastname}'/></td>
+			</tr>
+			<tr>
+				<td><g:message code='user.type.label' default='Type'/>:</td>
+				<td colspan='3'><g:select name="type" from="${userType}" value="${type}" noSelection="${['null':'Select Type']}"/></td>
+			</tr>
+			<tr>
+				<td><g:message code='user.identification.label' default='Identification'/>:</td>
+				<td colspan='3'><g:textField name='identification' size='20' maxlength='255' autocomplete='off' value='${Identification}'/></td>
+			</tr>
+			<tr>
+				<td><g:message code='user.birthdate.label' default='Birth date'/>:</td>
+				<td colspan='3'><g:textField name='birthDate' size='12' value='${birthDate}' placeholder="mm/dd/yyyy"/></td>
 			</tr>
 			<tr>
 				<td>&nbsp;</td>
@@ -66,7 +86,8 @@
 	<g:if test='${searched}'>
 
 <%
-def queryParams = [username: username, enabled: enabled, accountExpired: accountExpired, accountLocked: accountLocked, passwordExpired: passwordExpired]
+def queryParams = [username: username, firstname: firstname, lastname: lastname, type: type, identification: identification, birthDate: birthDate,
+					enabled: enabled, accountExpired: accountExpired, accountLocked: accountLocked, passwordExpired: passwordExpired]
 %>
 
 	<div class="list">
@@ -74,6 +95,11 @@ def queryParams = [username: username, enabled: enabled, accountExpired: account
 		<thead>
 		<tr>
 			<g:sortableColumn property="username" title="${message(code: 'user.username.label', default: 'Username')}" params="${queryParams}"/>
+			<g:sortableColumn property="firstname" title="${message(code: 'user.firstname.label', default: 'Firstname')}" params="${queryParams}"/>
+			<g:sortableColumn property="lastname" title="${message(code: 'user.lastname.label', default: 'Lastname')}" params="${queryParams}"/>
+			<g:sortableColumn property="type" title="${message(code: 'user.type.label', default: 'Type')}" params="${queryParams}"/>
+			<g:sortableColumn property="identification" title="${message(code: 'user.identification.label', default: 'Identification')}" params="${queryParams}"/>
+			<g:sortableColumn property="birthDate" title="${message(code: 'user.birthdate.label', default: 'Birthdate')}" params="${queryParams}"/>
 			<g:sortableColumn property="enabled" title="${message(code: 'user.enabled.label', default: 'Enabled')}" params="${queryParams}"/>
 			<g:sortableColumn property="accountExpired" title="${message(code: 'user.accountExpired.label', default: 'Account Expired')}" params="${queryParams}"/>
 			<g:sortableColumn property="accountLocked" title="${message(code: 'user.accountLocked.label', default: 'Account Locked')}" params="${queryParams}"/>
@@ -90,6 +116,11 @@ def queryParams = [username: username, enabled: enabled, accountExpired: account
 			<sec:noAccess controller='user' action='edit'>
 			<td>${fieldValue(bean: user, field: "username")}</td>
 			</sec:noAccess>
+			<td>${fieldValue(bean: user, field: "firstname")}</td>
+			<td>${fieldValue(bean: user, field: "lastname")}</td>
+			<td>${fieldValue(bean: user, field: "type")}</td>
+			<td>${fieldValue(bean: user, field: "identification")}</td>
+			<td><g:formatDate date="${user.birthDate}" format="MM/dd/yyyy"/></td>
 			<td><g:formatBoolean boolean="${user.enabled}"/></td>
 			<td><g:formatBoolean boolean="${user.accountExpired}"/></td>
 			<td><g:formatBoolean boolean="${user.accountLocked}"/></td>
@@ -119,6 +150,8 @@ $(document).ready(function() {
 		cache: false,
 		source: "${createLink(action: 'ajaxUserSearch')}"
 	});
+
+	$("#birthDate").datepicker();
 });
 
 <s2ui:initCheckboxes/>

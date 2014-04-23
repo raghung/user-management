@@ -15,14 +15,29 @@ class User {
 	String password
 	
 	/**
+	 * First name
+	 */
+	String firstname
+	
+	/**
+	 * Last name
+	 */
+	String lastname
+	
+	/**
 	 * User type from UserType table
 	 */
 	String type
 	
 	/**
-	 * Identification 
+	 * Identification for user like NPI number
 	 */
 	String identification
+	
+	/**
+	 * Birth date
+	 */
+	Date birthDate
 	
 	/**
 	 * Secret questions SecurityQuestions table and answers
@@ -39,19 +54,26 @@ class User {
 	boolean accountLocked
 	boolean passwordExpired
 
+	static hasMany = [organization: Organization]
+	
 	static transients = ['springSecurityService']
 
 	static constraints = {
-		username blank: false, unique: true
+		username email: true, blank: false, unique: true
 		password blank: false
+		firstname blank: false
+		lastname blank: false
 		type blank: false
-		identification nullable: true
+		identification blank: false
+		birthDate blank: false, max: new Date()
+		
 		question1 nullable: true
 		question2 nullable: true
 		question3 nullable: true
 		answer1 nullable: true
 		answer2 nullable: true
 		answer3 nullable: true
+		organization nullable: true
 	}
 
 	static mapping = {
@@ -74,5 +96,9 @@ class User {
 
 	protected void encodePassword() {
 		password = springSecurityService.encodePassword(password)
+	}
+	
+	String toString() {
+		return "${firstname} ${lastname}"
 	}
 }

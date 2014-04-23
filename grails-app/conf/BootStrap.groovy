@@ -2,6 +2,7 @@ import com.security.Requestmap;
 import com.security.Role;
 import com.security.User;
 import com.security.UserRole;
+import com.security.UserType;
 
 class BootStrap {
 
@@ -11,19 +12,22 @@ class BootStrap {
 		def staffRole = Role.findByAuthority("ROLE_STAFF")?: new Role(authority: 'ROLE_STAFF').save(flush: true)
 		def patientRole = Role.findByAuthority("ROLE_PATIENT")?: new Role(authority: 'ROLE_PATIENT').save(flush: true)
   
-		def testUser = new User(username: 'admin', password: 'admin', type: 'admin').save(flush: true, failOnError: true)
-		def testUser1 = new User(username: 'doctor', password: 'doctor', type: 'doctor').save(flush: true)
+		def testUser = new User(username: 'admin@onehaystack.com', password: 'admin', 
+								firstname: 'Raghu', lastname: 'Gorur', type: 'Admin',
+								birthDate: new GregorianCalendar(1980, 1, 13).getTime(),
+								identification: '621656802').save(flush: true, failOnError: true)
+		/*def testUser1 = new User(username: 'doctor', password: 'doctor', type: 'doctor').save(flush: true)
 		def testUser2 = new User(username: 'staff', password: 'staff', type: 'staff').save(flush: true)
-		def testUser3 = new User(username: 'patient', password: 'patient', type: 'patient').save(flush: true)
+		def testUser3 = new User(username: 'patient', password: 'patient', type: 'patient').save(flush: true)*/
   
 		UserRole.create testUser, adminRole, true
-		UserRole.create testUser1, doctorRole, true
+		/*UserRole.create testUser1, doctorRole, true
 		UserRole.create testUser2, staffRole, true
-		UserRole.create testUser3, patientRole, true
+		UserRole.create testUser3, patientRole, true*/
   
-		assert User.count() == 4
+		assert User.count() == 1
 		assert Role.count() == 4
-		assert UserRole.count() == 4
+		assert UserRole.count() == 1
 		
 		for (String url in [
 			'/',
@@ -57,7 +61,12 @@ class BootStrap {
 		new Requestmap(url: '/functions/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
 		new Requestmap(url: '/userType/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
 		new Requestmap(url: '/securityQuestions/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
+		new Requestmap(url: '/organization/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
 		
+		new UserType(name: 'Admin', description: 'Admin').save(flush: true, failOnError: true)
+		new UserType(name: 'Patient', description: 'Patient').save(flush: true, failOnError: true)
+		new UserType(name: 'Doctor', description: 'Physician or Higher').save(flush: true, failOnError: true)
+		new UserType(name: 'Staff', description: 'People working for Physician').save(flush: true, failOnError: true)
     }
     def destroy = {
     }
