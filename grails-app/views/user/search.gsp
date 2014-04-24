@@ -12,7 +12,7 @@
 	<s2ui:form width='100%' height='450' elementId='formContainer'
 	           titleCode='spring.security.ui.user.search'>
 
-	<g:form action='userSearch' name='userSearchForm'>
+	<g:form action='search' name='userSearchForm'>
 
 		<br/>
 
@@ -79,10 +79,11 @@
 			</tr>
 			</tbody>
 		</table>
+		<g:hiddenField name="searched" value="${searched}"/>
 	</g:form>
 
 	</s2ui:form>
-
+	
 	<g:if test='${searched}'>
 
 <%
@@ -146,9 +147,19 @@ def queryParams = [username: username, firstname: firstname, lastname: lastname,
 <script>
 $(document).ready(function() {
 	$("#username").focus().autocomplete({
-		minLength: 3,
+		minLength: 2,
 		cache: false,
-		source: "${createLink(action: 'ajaxUserSearch')}"
+		source: "${createLink(action: 'ajaxUserSearch', params: ['field': 'username'])}"
+	});
+	$("#firstname").focus().autocomplete({
+		minLength: 2,
+		cache: false,
+		source: "${createLink(action: 'ajaxUserSearch', params: ['field': 'firstname'])}"
+	});
+	$("#lastname").focus().autocomplete({
+		minLength: 2,
+		cache: false,
+		source: "${createLink(action: 'ajaxUserSearch', params: ['field': 'lastname'])}"
 	});
 
 	$("#birthDate").datepicker();

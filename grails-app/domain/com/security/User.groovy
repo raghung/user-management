@@ -42,9 +42,9 @@ class User {
 	/**
 	 * Secret questions SecurityQuestions table and answers
 	 */
-	Long question1
-	Long question2
-	Long question3
+	String question1
+	String question2
+	String question3
 	String answer1
 	String answer2
 	String answer3

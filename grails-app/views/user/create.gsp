@@ -33,10 +33,16 @@ tabData << [name: 'roles',    icon: 'icon_role', messageCode: 'spring.security.u
                             labelCodeDefault='First name' value="${user?.firstname}"/>
             <s2ui:textFieldRow name='lastname' labelCode='user.lastname.label' bean="${user}"
                             labelCodeDefault='Last name' value="${user?.lastname}"/>
-			<s2ui:textFieldRow name='type' labelCode='user.type.label' bean="${user}"
-                            labelCodeDefault='Type' value="${user?.type}"/>
+			<tr>
+				<td><g:message code='user.type.label' default='Type'/>:</td>
+				<td colspan='3'><g:select name="type" from="${userType}" value="${type}" noSelection="${['null':'Select Type']}"/></td>
+			</tr>
 			<s2ui:textFieldRow name='identification' labelCode='user.identification.label' bean="${user}"
                             labelCodeDefault='Identification' value="${user?.identification}"/>
+            <tr>
+				<td><g:message code='user.birthdate.label' default='Birth date'/>:</td>
+				<td colspan='3'><g:textField name='birthDate' size='12' value='${birthDate}' placeholder="mm/dd/yyyy"/></td>
+			</tr>
 			<s2ui:checkboxRow name='enabled' labelCode='user.enabled.label' bean="${user}"
                            labelCodeDefault='Enabled' value="${user?.enabled}"/>
 
@@ -72,6 +78,7 @@ tabData << [name: 'roles',    icon: 'icon_role', messageCode: 'spring.security.u
 <script>
 $(document).ready(function() {
 	$('#username').focus();
+	$("#birthDate").datepicker();
 	<s2ui:initCheckboxes/>
 });
 </script>
