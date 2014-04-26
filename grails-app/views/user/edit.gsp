@@ -1,5 +1,6 @@
 <html>
 <%@ page import="org.codehaus.groovy.grails.plugins.PluginManagerHolder" %>
+<%@ page import="com.security.User" %>
 
 <sec:ifNotSwitched>
 	<sec:ifAllGranted roles='ROLE_SWITCH_USER'>
@@ -33,9 +34,9 @@ if (isOpenId) {
 }
 %>
 
-<s2ui:tabs elementId='tabs' height='375' data="${tabData}">
+<s2ui:tabs elementId='tabs' height='575' data="${tabData}">
 
-	<s2ui:tab name='userinfo' height='275'>
+	<s2ui:tab name='userinfo' height='475'>
 		<table>
 		<tbody>
 
@@ -44,7 +45,26 @@ if (isOpenId) {
 
 			<s2ui:passwordFieldRow name='password' labelCode='user.password.label' bean="${user}"
                                 labelCodeDefault='Password' value="${user?.password}"/>
-
+			
+			<s2ui:textFieldRow name='firstname' labelCode='user.firstname.label' bean="${user}"
+                            labelCodeDefault='First name' value="${user?.firstname}"/>
+            
+            <s2ui:textFieldRow name='lastname' labelCode='user.lastname.label' bean="${user}"
+                            labelCodeDefault='Last name' value="${user?.lastname}"/>
+			
+			<tr>
+				<td><g:message code='user.type.label' default='Type'/>:</td>
+				<td colspan='3'><g:select name="type" from="${userType}" value="Admin" noSelection="${['null':'Select Type']}"/></td>
+			</tr>
+			
+			<s2ui:textFieldRow name='identification' labelCode='user.identification.label' bean="${user}"
+                            labelCodeDefault='Identification' value="${user?.identification}"/>
+            
+            <tr>
+				<td><g:message code='user.birthdate.label' default='Birth date'/>:</td>
+				<td colspan='3'><g:textField name='birthDate' size='12' value="${formatDate(date: user?.birthDate, format: 'MM/dd/yyyy')}" placeholder="mm/dd/yyyy"/></td>
+			</tr>
+			
 			<s2ui:checkboxRow name='enabled' labelCode='user.enabled.label' bean="${user}"
                            labelCodeDefault='Enabled' value="${user?.enabled}"/>
 
@@ -56,6 +76,23 @@ if (isOpenId) {
 
 			<s2ui:checkboxRow name='passwordExpired' labelCode='user.passwordExpired.label' bean="${user}"
                            labelCodeDefault='Password Expired' value="${user?.passwordExpired}"/>
+
+			<tr>
+				<td><g:message code='user.createTime.label' default='Create Time'/>:</td>
+				<td colspan='3'><g:formatDate date="${user?.createTime}" format="MM/dd/yyyy HH:mm:ss"/></td>
+			</tr>
+			<tr>
+				<td><g:message code='user.createUser.label' default='Create User'/>:</td>
+				<td colspan='3'>${User.get(user.createUser).username}</td>
+			</tr>
+			<tr>
+				<td><g:message code='user.lastUpdtTime.label' default='Last Updt Time'/>:</td>
+				<td colspan='3'><g:formatDate date="${user?.lastUpdtTime}" format="MM/dd/yyyy HH:mm:ss"/></td>
+			</tr>
+			<tr>
+				<td><g:message code='user.lastUpdtUser.label' default='Last Updt User'/>:</td>
+				<td colspan='3'>${User.get(user.lastUpdtUser).username}</td>
+			</tr>                           
 		</tbody>
 		</table>
 	</s2ui:tab>
@@ -122,6 +159,9 @@ $(document).ready(function() {
 	$('#runAsButton').bind('click', function() {
 	   document.forms.runAsForm.submit();
 	});
+
+	$("#birthDate").datepicker();
+	$("#type").val("${user?.type}")
 });
 </script>
 

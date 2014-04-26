@@ -18,27 +18,35 @@ tabData << [name: 'userinfo', icon: 'icon_user', messageCode: 'spring.security.u
 tabData << [name: 'roles',    icon: 'icon_role', messageCode: 'spring.security.ui.user.roles']
 %>
 
-<s2ui:tabs elementId='tabs' height='375' data="${tabData}">
+<s2ui:tabs elementId='tabs' height='575' data="${tabData}">
 
-	<s2ui:tab name='userinfo' height='280'>
+	<s2ui:tab name='userinfo' height='380'>
 		<table>
 		<tbody>
-
-			<s2ui:textFieldRow name='username' labelCode='user.username.label' bean="${user}"
-                            labelCodeDefault='Username' value="${user?.username}"/>
-
-			<s2ui:passwordFieldRow name='password' labelCode='user.password.label' bean="${user}"
-                                labelCodeDefault='Password' value="${user?.password}"/>
-			<s2ui:textFieldRow name='firstname' labelCode='user.firstname.label' bean="${user}"
-                            labelCodeDefault='First name' value="${user?.firstname}"/>
-            <s2ui:textFieldRow name='lastname' labelCode='user.lastname.label' bean="${user}"
-                            labelCodeDefault='Last name' value="${user?.lastname}"/>
+			<tr>
+				<td><g:message code='user.username.label' default='Username'/></td>
+				<td colspan='3'><g:textField name='username' value='${user?.username}' placeholder="E-Mail"/></td>
+			</tr>
+			<tr>
+				<td><g:message code='user.password.label' default='Password'/></td>
+				<td colspan='3'><g:passwordField name='password' value='${user?.password}'/> 8-64 Characters (A-Z, a-z, 0-9, !@#$%^&)</td>
+			</tr>
+			<tr>
+				<td><g:message code='user.firstname.label' default='First Name'/></td>
+				<td colspan='3'><g:textField name='firstname' value='${user?.firstname}' /></td>
+			</tr>
+			<tr>
+				<td><g:message code='user.lastname.label' default='Last Name'/></td>
+				<td colspan='3'><g:textField name='lastname' value='${user?.lastname}' /></td>
+			</tr>                                
 			<tr>
 				<td><g:message code='user.type.label' default='Type'/>:</td>
-				<td colspan='3'><g:select name="type" from="${userType}" value="${type}" noSelection="${['null':'Select Type']}"/></td>
+				<td colspan='3'><g:select name="type" from="${userType}" value="${user?.type}" noSelection="${['null':'Select Type']}"/></td>
 			</tr>
-			<s2ui:textFieldRow name='identification' labelCode='user.identification.label' bean="${user}"
-                            labelCodeDefault='Identification' value="${user?.identification}"/>
+			<tr>
+				<td><g:message code='user.identification.label' default='Identification'/></td>
+				<td colspan='3'><g:textField name='identification' value='${user?.identification}' /></td>
+			</tr>
             <tr>
 				<td><g:message code='user.birthdate.label' default='Birth date'/>:</td>
 				<td colspan='3'><g:textField name='birthDate' size='12' value='${birthDate}' placeholder="mm/dd/yyyy"/></td>

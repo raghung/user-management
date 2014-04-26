@@ -1,6 +1,13 @@
 <%@ page import="com.security.Organization" %>
 
 
+<div class="fieldcontain ${hasErrors(bean: organizationInstance, field: 'name', 'error')} ">
+	<label for="name">
+		<g:message code="organization.name.label" default="Name" />
+		
+	</label>
+	<g:textField name="name" value="${organizationInstance?.name}"/>
+</div>
 
 <div class="fieldcontain ${hasErrors(bean: organizationInstance, field: 'description', 'error')} ">
 	<label for="description">
@@ -8,14 +15,6 @@
 		
 	</label>
 	<g:textField name="description" value="${organizationInstance?.description}"/>
-</div>
-
-<div class="fieldcontain ${hasErrors(bean: organizationInstance, field: 'groupDescription', 'error')} ">
-	<label for="groupDescription">
-		<g:message code="organization.groupDescription.label" default="Group Description" />
-		
-	</label>
-	<g:textField name="groupDescription" value="${organizationInstance?.groupDescription}"/>
 </div>
 
 <div class="fieldcontain ${hasErrors(bean: organizationInstance, field: 'groupName', 'error')} ">
@@ -26,11 +25,14 @@
 	<g:textField name="groupName" value="${organizationInstance?.groupName}"/>
 </div>
 
-<div class="fieldcontain ${hasErrors(bean: organizationInstance, field: 'name', 'error')} ">
-	<label for="name">
-		<g:message code="organization.name.label" default="Name" />
+<div class="fieldcontain ${hasErrors(bean: organizationInstance, field: 'groupDescription', 'error')} ">
+	<label for="groupDescription">
+		<g:message code="organization.groupDescription.label" default="Group Description" />
 		
 	</label>
-	<g:textField name="name" value="${organizationInstance?.name}"/>
+	<g:textField name="groupDescription" value="${organizationInstance?.groupDescription}"/>
 </div>
+
+
+
 

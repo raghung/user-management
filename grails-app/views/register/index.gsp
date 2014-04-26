@@ -36,7 +36,7 @@
 	def pwdCriteria = '''
 						Minimum 8 characters, Maximum 64 charaters<br>
 						Atleast one Capital letter (A-Z)<br>
-						Atleast one Capital letter (a-z)<br>
+						Atleast one Small letter (a-z)<br>
 						Atleast one Number (0-9)<br>
 						Atleast one Special character (!@#$%^&)
 					  '''
@@ -72,8 +72,8 @@
 			<label for="">Name</label>
 			</td>
 			<td valign="top" class="value false">
-				<g:select name="role" from="[0:'Mr.', 1:'Mrs.', 2:'Ms.', 3:'Dr.']" 
-        									optionKey="key" optionValue="value"/>&nbsp;
+				<%--<g:select name="role" from="[0:'Mr.', 1:'Mrs.', 2:'Ms.', 3:'Dr.']" 
+        									optionKey="key" optionValue="value"/>&nbsp;--%>
         		<g:textField name="firstname" placeholder="First name"/>&nbsp;<g:textField name="lastname" placeholder="Last name"/>
 			</td>
 		</tr>

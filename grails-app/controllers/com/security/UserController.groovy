@@ -1,11 +1,86 @@
 package com.security
 
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 import grails.converters.JSON;
 import grails.plugin.springsecurity.SpringSecurityUtils;
+import grails.plugin.springsecurity.authentication.dao.NullSaltSource;
 
 class UserController extends grails.plugin.springsecurity.ui.UserController {
+	def springSecurityService
+	
+	def create() {
+		def user = lookupUserClass().newInstance(params)
+		[user: user, authorityList: sortedRoles(), userType: UserType.findAll()]
+	}
+
+	def save() {
+		def currentUser = springSecurityService.currentUser
+		
+		def user = new User(params) // parameters are automatically mapped
+		user.birthDate = params.date('birthDate', 'MM/dd/yyyy')
+		user.createUser = currentUser.id
+		user.lastUpdtUser = currentUser.id
+
+		if (params.password) {
+			String salt = saltSource instanceof NullSaltSource ? null : params.username
+			user.password = springSecurityUiService.encodePassword(params.password, salt)
+		}
+		
+		// Clear any pre-validated errors (sometime grails persists String errors on Date field)
+		user.clearErrors()
+		if (!user.save(flush: true)) {
+			render view: 'create', model: [user: user, authorityList: sortedRoles()]
+			return
+		}
+
+		addRoles(user)
+		flash.message = "${message(code: 'default.created.message', args: [message(code: 'user.label', default: 'User'), user.id])}"
+		redirect action: 'edit', id: user.id
+	}
+
+	def update() {
+		
+		def currentUser = springSecurityService.currentUser
+		String passwordFieldName = SpringSecurityUtils.securityConfig.userLookup.passwordPropertyName
+
+		def user = findById()
+		if (!user) return
+			if (!versionCheck('user.label', 'User', user, [user: user])) {
+				return
+		}
+		
+		// Map the parameters to user properties	
+		user.properties = params
+
+		user.birthDate = params.date('birthDate', 'MM/dd/yyyy')
+		user.lastUpdtTime = new Date()
+		user.lastUpdtUser = currentUser.id
+
+		def oldPassword = user."$passwordFieldName"
+		user.properties = params
+		if (params.password && !params.password.equals(oldPassword)) {
+			String salt = saltSource instanceof NullSaltSource ? null : params.username
+			user."$passwordFieldName" = springSecurityUiService.encodePassword(params.password, salt)
+		}
+
+		// Clear any pre-validated errors (sometime grails persists String errors on Date field)
+		user.clearErrors()
+		
+		if (!user.save(flush: true)) {
+			render view: 'edit', model: buildUserModel(user)
+			return
+		}
+
+		String usernameFieldName = SpringSecurityUtils.securityConfig.userLookup.usernamePropertyName
+
+		lookupUserRoleClass().removeAll user
+		addRoles user
+		userCache.removeUserFromCache user[usernameFieldName]
+		flash.message = "${message(code: 'default.updated.message', args: [message(code: 'user.label', default: 'User'), user.id])}"
+		redirect action: 'edit', id: user.id
+	}
 
 	def search() {
 		def searched = params.searched
@@ -117,7 +192,7 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 			String term = params.term
 			String field = params.field
 			setIfMissing 'max', 10, 100
-			
+
 			def results = User.createCriteria().list(max: params.max) {
 				ilike ("${field}", "${term}%")
 				order("${field}", "asc")
@@ -129,5 +204,27 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		}
 
 		render text: jsonData as JSON, contentType: 'text/plain'
+	}
+
+	protected Map buildUserModel(user) {
+
+		String authorityFieldName = SpringSecurityUtils.securityConfig.authority.nameField
+		String authoritiesPropertyName = SpringSecurityUtils.securityConfig.userLookup.authoritiesPropertyName
+
+		List roles = sortedRoles()
+		Set userRoleNames = user[authoritiesPropertyName].collect { it[authorityFieldName] }
+		def granted = [:]
+		def notGranted = [:]
+		for (role in roles) {
+			String authority = role[authorityFieldName]
+			if (userRoleNames.contains(authority)) {
+				granted[(role)] = userRoleNames.contains(authority)
+			}
+			else {
+				notGranted[(role)] = userRoleNames.contains(authority)
+			}
+		}
+
+		return [user: user, roleMap: granted + notGranted, userType: UserType.findAll()]
 	}
 }

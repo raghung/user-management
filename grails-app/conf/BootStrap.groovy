@@ -13,9 +13,9 @@ class BootStrap {
 		def patientRole = Role.findByAuthority("ROLE_PATIENT")?: new Role(authority: 'ROLE_PATIENT').save(flush: true)
   
 		def testUser = new User(username: 'admin@onehaystack.com', password: 'admin', 
-								firstname: 'Raghu', lastname: 'Gorur', type: 'Admin',
-								birthDate: new GregorianCalendar(1980, 1, 13).getTime(),
-								identification: '621656802').save(flush: true, failOnError: true)
+								firstname: 'Roger', lastname: 'Federer', type: 'Admin',
+								birthDate: new GregorianCalendar(1981, 1, 13).getTime(),
+								identification: '621656802', createUser: 1, lastUpdtUser: 1).save(flush: true, failOnError: true)
 		/*def testUser1 = new User(username: 'doctor', password: 'doctor', type: 'doctor').save(flush: true)
 		def testUser2 = new User(username: 'staff', password: 'staff', type: 'staff').save(flush: true)
 		def testUser3 = new User(username: 'patient', password: 'patient', type: 'patient').save(flush: true)*/

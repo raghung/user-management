@@ -161,6 +161,9 @@ the explicit tags above and edit those, not the taglib code.
 					<sec:access controller='securityInfo' action='currentAuth'>
 					<li><g:link action='currentAuth' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.auth'/></g:link></li>
 					</sec:access>
+					<sec:access controller='securityInfo' action='auditTrail'>
+					<li><g:link action='currentAuth' controller='auditTrail'>Audit Trail</g:link></li>
+					</sec:access>
 					<sec:access controller='securityInfo' action='usercache'>
 					<li><g:link action='usercache' controller='securityInfo'><g:message code='spring.security.ui.menu.appinfo.usercache'/></g:link></li>
 					</sec:access>

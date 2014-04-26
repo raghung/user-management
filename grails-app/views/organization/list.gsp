@@ -24,28 +24,27 @@
 				<thead>
 					<tr>
 					
+						<g:sortableColumn property="name" title="${message(code: 'organization.name.label', default: 'Name')}" />
+						
 						<g:sortableColumn property="description" title="${message(code: 'organization.description.label', default: 'Description')}" />
 					
-						<g:sortableColumn property="groupDescription" title="${message(code: 'organization.groupDescription.label', default: 'Group Description')}" />
-					
 						<g:sortableColumn property="groupName" title="${message(code: 'organization.groupName.label', default: 'Group Name')}" />
-					
-						<g:sortableColumn property="name" title="${message(code: 'organization.name.label', default: 'Name')}" />
-					
+						
+						<g:sortableColumn property="groupDescription" title="${message(code: 'organization.groupDescription.label', default: 'Group Description')}" />
+
 					</tr>
 				</thead>
 				<tbody>
 				<g:each in="${organizationInstanceList}" status="i" var="organizationInstance">
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
+						<td><g:link action="show" id="${organizationInstance.id}">${fieldValue(bean: organizationInstance, field: "name")}</g:link></td>
 					
-						<td><g:link action="show" id="${organizationInstance.id}">${fieldValue(bean: organizationInstance, field: "description")}</g:link></td>
-					
-						<td>${fieldValue(bean: organizationInstance, field: "groupDescription")}</td>
+						<td>${fieldValue(bean: organizationInstance, field: "description")}</td>
 					
 						<td>${fieldValue(bean: organizationInstance, field: "groupName")}</td>
-					
-						<td>${fieldValue(bean: organizationInstance, field: "name")}</td>
-					
+						
+						<td>${fieldValue(bean: organizationInstance, field: "groupDescription")}</td>
+
 					</tr>
 				</g:each>
 				</tbody>

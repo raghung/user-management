@@ -50,9 +50,14 @@ class User {
 	String answer3
 	
 	boolean enabled = true
-	boolean accountExpired
-	boolean accountLocked
-	boolean passwordExpired
+	boolean accountExpired = false
+	boolean accountLocked = false
+	boolean passwordExpired = false
+	
+	Date createTime = new Date()
+	Long createUser
+	Date lastUpdtTime = new Date()
+	Long lastUpdtUser
 
 	static hasMany = [organization: Organization]
 	
@@ -66,6 +71,10 @@ class User {
 		type blank: false
 		identification blank: false
 		birthDate blank: false, max: new Date()
+		createTime blank: false
+		createUser blank: false
+		lastUpdtTime blank: false
+		lastUpdtUser blank: false
 		
 		question1 nullable: true
 		question2 nullable: true

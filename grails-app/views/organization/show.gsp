@@ -23,6 +23,15 @@
 			</g:if>
 			<ol class="property-list organization">
 			
+				<g:if test="${organizationInstance?.name}">
+				<li class="fieldcontain">
+					<span id="name-label" class="property-label"><g:message code="organization.name.label" default="Name" /></span>
+					
+						<span class="property-value" aria-labelledby="name-label"><g:fieldValue bean="${organizationInstance}" field="name"/></span>
+					
+				</li>
+				</g:if>
+				
 				<g:if test="${organizationInstance?.description}">
 				<li class="fieldcontain">
 					<span id="description-label" class="property-label"><g:message code="organization.description.label" default="Description" /></span>
@@ -31,16 +40,7 @@
 					
 				</li>
 				</g:if>
-			
-				<g:if test="${organizationInstance?.groupDescription}">
-				<li class="fieldcontain">
-					<span id="groupDescription-label" class="property-label"><g:message code="organization.groupDescription.label" default="Group Description" /></span>
-					
-						<span class="property-value" aria-labelledby="groupDescription-label"><g:fieldValue bean="${organizationInstance}" field="groupDescription"/></span>
-					
-				</li>
-				</g:if>
-			
+
 				<g:if test="${organizationInstance?.groupName}">
 				<li class="fieldcontain">
 					<span id="groupName-label" class="property-label"><g:message code="organization.groupName.label" default="Group Name" /></span>
@@ -49,12 +49,12 @@
 					
 				</li>
 				</g:if>
-			
-				<g:if test="${organizationInstance?.name}">
+							
+				<g:if test="${organizationInstance?.groupDescription}">
 				<li class="fieldcontain">
-					<span id="name-label" class="property-label"><g:message code="organization.name.label" default="Name" /></span>
+					<span id="groupDescription-label" class="property-label"><g:message code="organization.groupDescription.label" default="Group Description" /></span>
 					
-						<span class="property-value" aria-labelledby="name-label"><g:fieldValue bean="${organizationInstance}" field="name"/></span>
+						<span class="property-value" aria-labelledby="groupDescription-label"><g:fieldValue bean="${organizationInstance}" field="groupDescription"/></span>
 					
 				</li>
 				</g:if>
