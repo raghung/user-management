@@ -55,6 +55,15 @@ the explicit tags above and edit those, not the taglib code.
 .icon_info {
 	background-image: url('${fam.icon(name: 'information')}');
 }
+.icon_organization {
+	background-image: url('${fam.icon(name: 'chart_organisation')}');
+}
+.icon_information {
+	background-image: url('${fam.icon(name: 'information')}');
+}
+.icon_delete {
+	background-image: url('${fam.icon(name: 'delete')}');
+}
 .icon, .ui-tabs .ui-tabs-nav li a.icon {
 	background-repeat: no-repeat;
 	padding-left: 24px;

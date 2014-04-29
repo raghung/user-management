@@ -31,7 +31,7 @@
 					
 				</li>
 				</g:if>
-				
+			
 				<g:if test="${organizationInstance?.description}">
 				<li class="fieldcontain">
 					<span id="description-label" class="property-label"><g:message code="organization.description.label" default="Description" /></span>
@@ -40,7 +40,7 @@
 					
 				</li>
 				</g:if>
-
+			
 				<g:if test="${organizationInstance?.groupName}">
 				<li class="fieldcontain">
 					<span id="groupName-label" class="property-label"><g:message code="organization.groupName.label" default="Group Name" /></span>
@@ -49,7 +49,7 @@
 					
 				</li>
 				</g:if>
-							
+			
 				<g:if test="${organizationInstance?.groupDescription}">
 				<li class="fieldcontain">
 					<span id="groupDescription-label" class="property-label"><g:message code="organization.groupDescription.label" default="Group Description" /></span>
@@ -58,7 +58,6 @@
 					
 				</li>
 				</g:if>
-			
 			</ol>
 			<g:form>
 				<fieldset class="buttons">

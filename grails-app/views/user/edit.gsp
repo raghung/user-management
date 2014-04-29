@@ -27,7 +27,10 @@
 <%
 def tabData = []
 tabData << [name: 'userinfo', icon: 'icon_user', messageCode: 'spring.security.ui.user.info']
+tabData << [name: 'organization', icon: 'icon_organization', messageCode: 'spring.security.ui.user.organization']
 tabData << [name: 'roles',    icon: 'icon_role', messageCode: 'spring.security.ui.user.roles']
+tabData << [name: 'contactinfo',    icon: 'icon_information', messageCode: 'spring.security.ui.user.contactinfo']
+
 boolean isOpenId = PluginManagerHolder.pluginManager.hasGrailsPlugin('springSecurityOpenid')
 if (isOpenId) {
 	tabData << [name: 'openIds', icon: 'icon_role', messageCode: 'spring.security.ui.user.openIds']
@@ -97,7 +100,51 @@ if (isOpenId) {
 		</table>
 	</s2ui:tab>
 
+	<s2ui:tab name='organization' height='275'>
+		<div>
+			Organization: <g:select name="org" from="${orgList}" noSelection="${['null':'-- Select --']}"
+									onchange="${remoteFunction(controller: 'user',
+												action: 'ajaxGroupNames',
+                  								update: [success: 'group-names'],
+                  								params: '\'name=\' + this.value')}"/>
+			&nbsp;Group: <span id="group-names"><select name="groupName" id="groupName">
+								<option value="null">-- Select --</option>
+						 </select></span>
+			&nbsp;<input type="button" value="Add" onclick="addOrg()">
+		</div>
+		<hr>
+		<div>
+			<table id="tblOrg">
+				<thead>
+				<tr>
+					<th>Organization</th>
+					<th>Group</th>
+					<th>&nbsp;</th>
+				</tr>
+				</thead>
+				<tbody>
+				<g:each in="${user.organization}" status="i" var="org">
+				<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
+					<td>${org.name}<g:hiddenField name="orgId" value="${org.id}"/></td>
+					<td>${org.groupName}</td>
+					<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td>
+				</tr>
+				</g:each>
+				</tbody>
+			</table>
+		</div>
+	</s2ui:tab>
+	
 	<s2ui:tab name='roles' height='275'>
+		<g:each var="entry" in="${roleMap}">
+		<div>
+			<g:checkBox name="${entry.key.authority}" value="${entry.value}"/>
+			<g:link controller='role' action='edit' id='${entry.key.id}'>${entry.key.authority.encodeAsHTML()}</g:link>
+		</div>
+		</g:each>
+	</s2ui:tab>
+	
+	<s2ui:tab name='contactinfo' height='275'>
 		<g:each var="entry" in="${roleMap}">
 		<div>
 			<g:checkBox name="${entry.key.authority}" value="${entry.value}"/>
@@ -162,7 +209,62 @@ $(document).ready(function() {
 
 	$("#birthDate").datepicker();
 	$("#type").val("${user?.type}")
+
+	 /*$("#vehicleManufacturerDropDown").change(function() {
+       		$.ajax({
+               url: "/ChainDropDown/vehicle/manufacturerSelected",
+               data: "id=" + this.value,
+               cache: false,
+               success: function(html) {
+               		$("#models").html(html);
+               }
+             });
+          });*/
+		 	
 });
+function addOrg() {
+	var org = $("#org").val();
+	var orgId = $("#groupName").val();
+	var grp = $("#groupName option:selected").html();
+
+	if (orgId == 'null') return;
+
+	var arrId = document.getElementsByName('orgId');
+	for(i=0; i<arrId.length; i++) {
+		if (arrId[i].value == orgId) {
+			alert("Group already added");
+			return;
+		}
+	}
+	
+	// Adding to table
+	var len = $("#tblOrg tbody tr").length;
+	var trClass = "even";
+	if (len % 2 == 0)
+		trClass = "odd"
+
+	$("#tblOrg tbody").append(
+			'<tr class="'+ trClass +'">' +
+			'<td>'+org+'<input type="hidden" name="orgId" id="orgId" value="'+orgId+'"/></td>' +
+			'<td>'+grp+'</td>' +
+			'<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td>' +
+			'</tr>'
+
+			);
+}
+function delOrg(ele) {
+	$(ele).closest('tr').remove();
+	// reset the row class
+	$("#tblOrg tbody tr").each(function() {
+			trClass = "even";
+			if ($(this).index() % 2 == 0)
+				trClass = "odd"
+			$(this).removeClass();
+			
+			$(this).addClass(trClass);	
+		});
+}
+
 </script>
 
 </body>

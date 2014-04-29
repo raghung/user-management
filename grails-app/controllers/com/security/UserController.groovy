@@ -6,13 +6,14 @@ import java.util.Map;
 import grails.converters.JSON;
 import grails.plugin.springsecurity.SpringSecurityUtils;
 import grails.plugin.springsecurity.authentication.dao.NullSaltSource;
+import grails.util.GrailsNameUtils;
 
 class UserController extends grails.plugin.springsecurity.ui.UserController {
 	def springSecurityService
 	
 	def create() {
 		def user = lookupUserClass().newInstance(params)
-		[user: user, authorityList: sortedRoles(), userType: UserType.findAll()]
+		[user: user, authorityList: sortedRoles(), userType: UserType.findAll(), orgList: getOrganizations()]
 	}
 
 	def save() {
@@ -28,6 +29,14 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 			user.password = springSecurityUiService.encodePassword(params.password, salt)
 		}
 		
+		// Organization
+		def lst = params.list('orgId')
+		def lstOrg = []
+		for (orgId in lst) {
+			lstOrg += Long.parseLong(orgId)
+		}
+		user.organization = Organization.findAllByIdInList(lstOrg)
+		
 		// Clear any pre-validated errors (sometime grails persists String errors on Date field)
 		user.clearErrors()
 		if (!user.save(flush: true)) {
@@ -40,6 +49,22 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		redirect action: 'edit', id: user.id
 	}
 
+	protected void addRoles(user) {
+		String upperAuthorityFieldName = GrailsNameUtils.getClassName(
+			SpringSecurityUtils.securityConfig.authority.nameField, null)
+
+		// User is a patient
+		if (user.type == 'Patient') {
+			lookupUserRoleClass().create user, lookupRoleClass()."findBy$upperAuthorityFieldName"('ROLE_PATIENT'), true
+			return
+		}
+		for (String key in params.keySet()) {
+			if (key.contains('ROLE') && 'on' == params.get(key)) {
+				lookupUserRoleClass().create user, lookupRoleClass()."findBy$upperAuthorityFieldName"(key), true
+			}
+		}
+	}
+	
 	def update() {
 		
 		def currentUser = springSecurityService.currentUser
@@ -64,11 +89,19 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 			String salt = saltSource instanceof NullSaltSource ? null : params.username
 			user."$passwordFieldName" = springSecurityUiService.encodePassword(params.password, salt)
 		}
-
+		
+		// Organization
+		def lst = params.list('orgId')
+		def lstOrg = []
+		for (orgId in lst) {
+			lstOrg += Long.parseLong(orgId)
+		}
+		user.organization = Organization.findAllByIdInList(lstOrg)
+		
 		// Clear any pre-validated errors (sometime grails persists String errors on Date field)
 		user.clearErrors()
 		
-		if (!user.save(flush: true)) {
+		if (!user.save(flush: true, failOnError: true)) {
 			render view: 'edit', model: buildUserModel(user)
 			return
 		}
@@ -206,6 +239,11 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		render text: jsonData as JSON, contentType: 'text/plain'
 	}
 
+	def ajaxGroupNames() {
+		def lstOrg = Organization.findAllByName(params.name, [sort: "groupName", order: "asc"])
+		render template: 'groupNames', model: [orgList: lstOrg]
+	}
+	
 	protected Map buildUserModel(user) {
 
 		String authorityFieldName = SpringSecurityUtils.securityConfig.authority.nameField
@@ -224,7 +262,19 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 				notGranted[(role)] = userRoleNames.contains(authority)
 			}
 		}
-
-		return [user: user, roleMap: granted + notGranted, userType: UserType.findAll()]
+		
+		return [user: user, roleMap: granted + notGranted, userType: UserType.findAll(), orgList: getOrganizations()]
 	}
+	
+	protected List getOrganizations() {
+		def criteria = Organization.createCriteria()
+		
+		return criteria.list {
+			projections {
+				distinct("name")
+			}
+		}
+	}
+	
+	 
 }

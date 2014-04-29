@@ -1,5 +1,7 @@
 package com.security
 
+import java.util.Date;
+
 import org.apache.commons.lang.builder.HashCodeBuilder
 
 class Organization implements Serializable {

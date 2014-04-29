@@ -1,6 +1,7 @@
 <%@ page import="com.security.Organization" %>
 
 
+
 <div class="fieldcontain ${hasErrors(bean: organizationInstance, field: 'name', 'error')} ">
 	<label for="name">
 		<g:message code="organization.name.label" default="Name" />
@@ -32,7 +33,4 @@
 	</label>
 	<g:textField name="groupDescription" value="${organizationInstance?.groupDescription}"/>
 </div>
-
-
-
 
