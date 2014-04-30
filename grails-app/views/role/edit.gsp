@@ -25,8 +25,35 @@ tabData << [name: 'users',    icon: 'icon_users', messageCode: 'spring.security.
 	<s2ui:tab name='roleinfo' height='150'>
 		<table>
 		<tbody>
-			<s2ui:textFieldRow name='authority' labelCode='role.authority.label' bean="${role}"
-                            labelCodeDefault='Authority' value="${role?.authority}"/>
+			<tr>
+				<td><g:message code='user.organization.label' default='Organization'/></td>
+				<td colspan="3">
+					<g:select name="org" from="${orgList}" noSelection="${['null':'-- Select --']}"
+							value="${role?.organization.name}"
+							onchange="${remoteFunction(controller: 'user',
+										action: 'ajaxGroupNames',
+                						update: [success: 'group-names'],
+                						params: '\'name=\' + this.value')}"/>
+                </td>
+           	</tr>
+           	<tr>
+           		<td><g:message code='user.organization.group.label' default='Group'/></td>
+                <td colspan="3">
+                	<span id="group-names">
+                		<g:select name="groupName"
+          							from="${grpList}"
+          							optionKey="id"
+          							optionValue="groupName"
+          							noSelection="${['null': '-- Select --'] }"
+          							value="${role?.organization.id}"/>
+						
+				 	</span>
+				</td>
+			</tr>
+			<tr>
+				<td><g:message code='role.authority.label' default='Authority'/></td>
+				<td colspan='3'><g:textField name='authority' size='50' value="${role?.authority}"/></td>
+			</tr>
 		</tbody>
 		</table>
 	</s2ui:tab>

@@ -8,19 +8,26 @@ import com.security.UserType;
 class BootStrap {
 
     def init = { servletContext ->
-		def adminRole = Role.findByAuthority("ROLE_ADMIN")?: new Role(authority: 'ROLE_ADMIN').save(flush: true)
-		def doctorRole = Role.findByAuthority("ROLE_DOCTOR")?: new Role(authority: 'ROLE_DOCTOR').save(flush: true)
-		def staffRole = Role.findByAuthority("ROLE_STAFF")?: new Role(authority: 'ROLE_STAFF').save(flush: true)
-		def patientRole = Role.findByAuthority("ROLE_PATIENT")?: new Role(authority: 'ROLE_PATIENT').save(flush: true)
+		def common = new Organization(name: 'Default', groupName: 'Default').save(flush: true, failOnError: true)
+		def kekh = new Organization(name: 'USC', groupName: 'USC KEKH').save(flush: true, failOnError: true)
+		def cancer = new Organization(name: 'USC', groupName: 'USC Cancer').save(flush: true, failOnError: true)
+		def derm = new Organization(name: 'USC', groupName: 'USC Dermatology').save(flush: true, failOnError: true)
+		
+		def adminRole = Role.findByAuthority("ROLE_ADMIN")?: new Role(authority: 'ROLE_ADMIN', organization: common).save(flush: true)
+		def doctorRole = Role.findByAuthority("ROLE_DOCTOR")?: new Role(authority: 'ROLE_DOCTOR', organization: common).save(flush: true)
+		def staffRole = Role.findByAuthority("ROLE_STAFF")?: new Role(authority: 'ROLE_STAFF', organization: common).save(flush: true)
+		def patientRole = Role.findByAuthority("ROLE_PATIENT")?: new Role(authority: 'ROLE_PATIENT', organization: common).save(flush: true)
   
 		def testUser = new User(username: 'admin@onehaystack.com', password: 'admin', 
 								firstname: 'Roger', lastname: 'Federer', type: 'Admin',
 								birthDate: new GregorianCalendar(1981, 4, 13).getTime(),
-								identification: '123121234', createUser: 1, lastUpdtUser: 1).save(flush: true, failOnError: true)
+								identification: '123121234', createUser: 1, lastUpdtUser: 1,
+								organization: [common]).save(flush: true, failOnError: true)
 		def testUser1 = new User(username: 'doctor@onehaystack.com', password: 'doctor',
 									firstname: 'Rafael', lastname: 'Nadal', type: 'Doctor',
 									birthDate: new GregorianCalendar(1983, 8, 22).getTime(),
-									identification: '23456789', createUser: 1, lastUpdtUser: 1).save(flush: true, failOnError: true)
+									identification: '23456789', createUser: 1, lastUpdtUser: 1,
+									organization: [common]).save(flush: true, failOnError: true)
 		/*def testUser1 = new User(username: 'doctor', password: 'doctor', type: 'doctor').save(flush: true)
 		def testUser2 = new User(username: 'staff', password: 'staff', type: 'staff').save(flush: true)
 		def testUser3 = new User(username: 'patient', password: 'patient', type: 'patient').save(flush: true)*/
@@ -73,10 +80,7 @@ class BootStrap {
 		new UserType(name: 'Patient', description: 'Patient').save(flush: true, failOnError: true)
 		new UserType(name: 'Doctor', description: 'Physician or Higher').save(flush: true, failOnError: true)
 		new UserType(name: 'Staff', description: 'People working for Physician').save(flush: true, failOnError: true)
-		
-		new Organization(name: 'USC', groupName: 'USC KEKH').save(flush: true, failOnError: true)
-		new Organization(name: 'USC', groupName: 'USC Cancer').save(flush: true, failOnError: true)
-		new Organization(name: 'USC', groupName: 'USC Dermatology').save(flush: true, failOnError: true)
+
     }
     def destroy = {
     }

@@ -10,7 +10,7 @@
 
 <div class="body">
 
-	<s2ui:form width='100%' height='200' elementId='formContainer'
+	<s2ui:form width='100%' height='240' elementId='formContainer'
 	           titleCode='default.create.label' titleCodeArgs='[entityName]'>
 
 	<g:form action="save" name='roleCreateForm'>
@@ -20,9 +20,30 @@
 
 			<table>
 				<tbody>
-
-					<s2ui:textFieldRow name='authority' labelCode='role.authority.label' bean="${role}"
-					                   size='50' labelCodeDefault='Authority' value="${role?.authority}"/>
+					<tr>
+						<td><g:message code='user.organization.label' default='Organization'/></td>
+						<td colspan="3">
+							<g:select name="org" from="${orgList}" noSelection="${['null':'-- Select --']}"
+									onchange="${remoteFunction(controller: 'user',
+												action: 'ajaxGroupNames',
+                  								update: [success: 'group-names'],
+                  								params: '\'name=\' + this.value')}"/>
+                  		</td>
+                  	</tr>
+                  	<tr>
+                  		<td><g:message code='user.organization.group.label' default='Group'/></td>
+                  		<td colspan="3">
+                  			<span id="group-names">
+								<select name="groupName" id="groupName">
+									<option value="null">-- Select --</option>
+						 		</select>
+						 	</span>
+						</td>
+					</tr>
+					<tr>
+						<td><g:message code='role.authority.label' default='Authority'/></td>
+						<td colspan='3'><g:textField name='authority' size='50' value="${role?.authority}"/></td>
+					</tr>
 
 					<tr><td>&nbsp;</td></tr>
 

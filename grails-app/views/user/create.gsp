@@ -95,7 +95,11 @@ tabData << [name: 'contactinfo',    icon: 'icon_information', messageCode: 'spri
 				<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
 					<td>${org.name}<g:hiddenField name="orgId" value="${org.id}"/></td>
 					<td>${org.groupName}</td>
-					<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td>
+					<td>
+						<g:if test="${org.name != 'Default'}">
+						<img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/>
+						</g:if>
+					</td>
 				</tr>
 				</g:each>
 				</tbody>
@@ -150,15 +154,15 @@ function addOrg() {
 	var trClass = "even";
 	if (len % 2 == 0)
 		trClass = "odd"
+	var appendStr = '<tr class="'+ trClass +'">' +
+					'<td>'+org+'<input type="hidden" name="orgId" id="orgId" value="'+orgId+'"/></td>' +
+					'<td>'+grp+'</td>';
+	if (org == 'Default') 
+		appendStr = appendStr + '<td>&nbsp;</td></tr>';
+	else 				
+		appendStr = appendStr + '<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td></tr>';
 
-	$("#tblOrg tbody").append(
-			'<tr class="'+ trClass +'">' +
-			'<td>'+org+'<input type="hidden" name="orgId" id="orgId" value="'+orgId+'"/></td>' +
-			'<td>'+grp+'</td>' +
-			'<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td>' +
-			'</tr>'
-
-			);
+	$("#tblOrg tbody").append(appendStr);
 }
 function delOrg(ele) {
 	$(ele).closest('tr').remove();

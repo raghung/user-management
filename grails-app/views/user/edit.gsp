@@ -127,7 +127,11 @@ if (isOpenId) {
 				<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
 					<td>${org.name}<g:hiddenField name="orgId" value="${org.id}"/></td>
 					<td>${org.groupName}</td>
-					<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td>
+					<td>
+						<g:if test="${org.name != 'Default'}">
+						<img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/>
+						</g:if>
+					</td>
 				</tr>
 				</g:each>
 				</tbody>
@@ -138,7 +142,7 @@ if (isOpenId) {
 	<s2ui:tab name='roles' height='275'>
 		<g:each var="entry" in="${roleMap}">
 		<div>
-			<g:checkBox name="${entry.key.authority}" value="${entry.value}"/>
+			<g:checkBox name="userRole" value="${entry.key.id}" checked="${entry.value}"/>
 			<g:link controller='role' action='edit' id='${entry.key.id}'>${entry.key.authority.encodeAsHTML()}</g:link>
 		</div>
 		</g:each>
@@ -242,16 +246,17 @@ function addOrg() {
 	var trClass = "even";
 	if (len % 2 == 0)
 		trClass = "odd"
+	var appendStr = '<tr class="'+ trClass +'">' +
+					'<td>'+org+'<input type="hidden" name="orgId" id="orgId" value="'+orgId+'"/></td>' +
+					'<td>'+grp+'</td>';
+	if (org == 'Default') 
+		appendStr = appendStr + '<td>&nbsp;</td></tr>';
+	else 				
+		appendStr = appendStr + '<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td></tr>';
 
-	$("#tblOrg tbody").append(
-			'<tr class="'+ trClass +'">' +
-			'<td>'+org+'<input type="hidden" name="orgId" id="orgId" value="'+orgId+'"/></td>' +
-			'<td>'+grp+'</td>' +
-			'<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td>' +
-			'</tr>'
-
-			);
+	$("#tblOrg tbody").append(appendStr);
 }
+
 function delOrg(ele) {
 	$(ele).closest('tr').remove();
 	// reset the row class

@@ -13,7 +13,7 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 	
 	def create() {
 		def user = lookupUserClass().newInstance(params)
-		[user: user, authorityList: sortedRoles(), userType: UserType.findAll(), orgList: getOrganizations()]
+		[user: user, authorityList: sortedRoles(user), userType: UserType.findAll(), orgList: getOrganizations()]
 	}
 
 	def save() {
@@ -30,17 +30,12 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		}
 		
 		// Organization
-		def lst = params.list('orgId')
-		def lstOrg = []
-		for (orgId in lst) {
-			lstOrg += Long.parseLong(orgId)
-		}
-		user.organization = Organization.findAllByIdInList(lstOrg)
+		user.organization = populateOrganization(user)
 		
 		// Clear any pre-validated errors (sometime grails persists String errors on Date field)
 		user.clearErrors()
 		if (!user.save(flush: true)) {
-			render view: 'create', model: [user: user, authorityList: sortedRoles()]
+			render view: 'create', model: [user: user, authorityList: sortedRoles(user)]
 			return
 		}
 
@@ -53,16 +48,32 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		String upperAuthorityFieldName = GrailsNameUtils.getClassName(
 			SpringSecurityUtils.securityConfig.authority.nameField, null)
 
-		// User is a patient
-		if (user.type == 'Patient') {
-			lookupUserRoleClass().create user, lookupRoleClass()."findBy$upperAuthorityFieldName"('ROLE_PATIENT'), true
+		// Default organization
+		def orgDefault = Organization.findByName("Default")
+		if (user.organization.contains(orgDefault)) {
+			def role = 'ROLE_PATIENT'
+			if (user.type == 'Patient') {
+				role = 'ROLE_PATIENT'
+			} else if (user.type == 'Doctor') {
+				role = 'ROLE_DOCTOR'
+			} else if (user.type == 'Staff') {
+				role = 'ROLE_STAFF'
+			} else if (user.type == 'Admin') {
+				role = 'ROLE_ADMIN'
+			}
+			lookupUserRoleClass().create user, lookupRoleClass().findByAuthorityAndOrganization(role, orgDefault), true
 			return
 		}
-		for (String key in params.keySet()) {
+		
+		def lstRoles = params.list('userRole')
+		for (roleId in lstRoles) {
+			lookupUserRoleClass().create user, lookupRoleClass().findById(Long.parseLong(roleId)), true
+		}
+		/*for (String key in params.keySet()) {
 			if (key.contains('ROLE') && 'on' == params.get(key)) {
 				lookupUserRoleClass().create user, lookupRoleClass()."findBy$upperAuthorityFieldName"(key), true
 			}
-		}
+		}*/
 	}
 	
 	def update() {
@@ -91,12 +102,7 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		}
 		
 		// Organization
-		def lst = params.list('orgId')
-		def lstOrg = []
-		for (orgId in lst) {
-			lstOrg += Long.parseLong(orgId)
-		}
-		user.organization = Organization.findAllByIdInList(lstOrg)
+		user.organization = populateOrganization(user)
 		
 		// Clear any pre-validated errors (sometime grails persists String errors on Date field)
 		user.clearErrors()
@@ -115,6 +121,35 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		redirect action: 'edit', id: user.id
 	}
 
+	protected List populateOrganization(User user) {
+		def lst = params.list('orgId')
+		
+		// Patient is default organization
+		if (user.type == 'Patient') {
+			lst = []
+		}
+		
+		def lstOrgIds = []
+		for (orgId in lst) {
+			lstOrgIds += Long.parseLong(orgId)
+		}
+		
+		def orgDefault = Organization.findByName('Default')
+		def lstOrg = Organization.findAllByIdInList(lstOrgIds)
+		
+		// Actual organization is selected
+		if (lstOrg.size() > 1 && lstOrg.contains(orgDefault)) {
+			lstOrg -= orgDefault
+		}
+		
+		// No organization is selected
+		if (lstOrg.size() == 0) {
+			lstOrg += orgDefault
+		}
+		
+		return lstOrg
+	}
+	
 	def search() {
 		def searched = params.searched
 		if (params.searched == null) {
@@ -244,29 +279,37 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		render template: 'groupNames', model: [orgList: lstOrg]
 	}
 	
-	protected Map buildUserModel(user) {
+	protected Map buildUserModel(User user) {
 
 		String authorityFieldName = SpringSecurityUtils.securityConfig.authority.nameField
 		String authoritiesPropertyName = SpringSecurityUtils.securityConfig.userLookup.authoritiesPropertyName
 
-		List roles = sortedRoles()
-		Set userRoleNames = user[authoritiesPropertyName].collect { it[authorityFieldName] }
+		List roles = sortedRoles(user)
+		//Set userRoleNames = user[authoritiesPropertyName].collect { it[authorityFieldName] }
+		Set userRoles = user.getAuthorities()
 		def granted = [:]
 		def notGranted = [:]
 		for (role in roles) {
-			String authority = role[authorityFieldName]
-			if (userRoleNames.contains(authority)) {
-				granted[(role)] = userRoleNames.contains(authority)
+			//String authority = role[authorityFieldName]
+			if (userRoles.contains(role)) {
+				granted[(role)] = true
 			}
 			else {
-				notGranted[(role)] = userRoleNames.contains(authority)
+				notGranted[(role)] = false
 			}
 		}
 		
-		return [user: user, roleMap: granted + notGranted, userType: UserType.findAll(), orgList: getOrganizations()]
+		def roleMap = granted + notGranted
+		/*def grpMap = [:]
+		for (entry in roleMap) {
+			def org = entry.key.organization
+			grpMap.put(org.name + " - " + org.groupName, entry)
+		}*/
+		
+		return [user: user, roleMap: roleMap, userType: UserType.findAll(), orgList: getOrganizations()]
 	}
 	
-	protected List getOrganizations() {
+	static List getOrganizations() {
 		def criteria = Organization.createCriteria()
 		
 		return criteria.list {
@@ -276,5 +319,26 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		}
 	}
 	
+	protected List sortedRoles(User user) {
+		def lstOrgs = []
+		for (org in user.organization) {
+			lstOrgs += org.name + "|" + org.groupName
+		}
+		def setOrgs = lstOrgs as Set
+		def lstRoles = []
+		for (org in setOrgs) {
+			def split = org.tokenize("|")
+			lstRoles += lookupRoleClass().createCriteria().list() {
+				organization {
+					and {
+						eq("name", "${split[0]}")
+						eq("groupName", "${split[1]}" )
+					}
+				}
+				order("authority", "asc")
+			}
+		}
+		return lstRoles
+	}
 	 
 }
