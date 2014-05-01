@@ -30,6 +30,7 @@ tabData << [name: 'users',    icon: 'icon_users', messageCode: 'spring.security.
 				<td colspan="3">
 					<g:select name="org" from="${orgList}" noSelection="${['null':'-- Select --']}"
 							value="${role?.organization.name}"
+							optionKey="name" optionValue="description"
 							onchange="${remoteFunction(controller: 'user',
 										action: 'ajaxGroupNames',
                 						update: [success: 'group-names'],
@@ -43,7 +44,7 @@ tabData << [name: 'users',    icon: 'icon_users', messageCode: 'spring.security.
                 		<g:select name="groupName"
           							from="${grpList}"
           							optionKey="id"
-          							optionValue="groupName"
+          							optionValue="groupDescription"
           							noSelection="${['null': '-- Select --'] }"
           							value="${role?.organization.id}"/>
 						
@@ -63,7 +64,7 @@ tabData << [name: 'users',    icon: 'icon_users', messageCode: 'spring.security.
 		<g:message code="spring.security.ui.role_no_users"/>
 		</g:if>
 		<g:each var="u" in="${users}">
-			<g:link controller='user' action='edit' id='${u.id}'>${u.username.encodeAsHTML()}</g:link><br/>
+			<g:link controller='user' action='edit' id='${u.id}'>${u.firstname.encodeAsHTML()} ${u.lastname.encodeAsHTML()}</g:link><br/>
 		</g:each>
 	</s2ui:tab>
 

@@ -71,13 +71,16 @@ tabData << [name: 'contactinfo',    icon: 'icon_information', messageCode: 'spri
 	<s2ui:tab name='organization' height='275'>
 		<div>
 			Organization: <g:select name="org" from="${orgList}" noSelection="${['null':'-- Select --']}"
+									optionKey="name" optionValue="description"
 									onchange="${remoteFunction(controller: 'user',
 												action: 'ajaxGroupNames',
                   								update: [success: 'group-names'],
                   								params: '\'name=\' + this.value')}"/>
-			&nbsp;Group: <span id="group-names"><select name="groupName" id="groupName">
+			&nbsp;Group: <span id="group-names">
+							<select name="groupName" id="groupName">
 								<option value="null">-- Select --</option>
-						 </select></span>
+						 	</select>
+						 </span>
 			&nbsp;<input type="button" value="Add" onclick="addOrg()">
 		</div>
 		<hr>
@@ -91,33 +94,20 @@ tabData << [name: 'contactinfo',    icon: 'icon_information', messageCode: 'spri
 				</tr>
 				</thead>
 				<tbody>
-				<g:each in="${user.organization}" status="i" var="org">
-				<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-					<td>${org.name}<g:hiddenField name="orgId" value="${org.id}"/></td>
-					<td>${org.groupName}</td>
-					<td>
-						<g:if test="${org.name != 'Default'}">
-						<img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/>
-						</g:if>
-					</td>
-				</tr>
-				</g:each>
+				
 				</tbody>
 			</table>
 		</div>
 	</s2ui:tab>
 	
 	<s2ui:tab name='roles' height='280'>
-		<g:each var="auth" in="${authorityList}">
-		<div>
-			<g:checkBox name="${auth.authority}" />
-			<g:link controller='role' action='edit' id='${auth.id}'>${auth.authority.encodeAsHTML()}</g:link>
+		<div id="authList">
+			<g:render template="authList" model="[roleMap: roleMap, userRoles: userRoles]" />
 		</div>
-		</g:each>
 	</s2ui:tab>
 
 	<s2ui:tab name='contactinfo' height='275'>
-		Contact Information
+		contact information
 	</s2ui:tab>
 	
 </s2ui:tabs>
@@ -134,6 +124,7 @@ $(document).ready(function() {
 	$("#birthDate").datepicker();
 	<s2ui:initCheckboxes/>
 });
+
 function addOrg() {
 	var org = $("#org").val();
 	var orgId = $("#groupName").val();
@@ -163,7 +154,10 @@ function addOrg() {
 		appendStr = appendStr + '<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td></tr>';
 
 	$("#tblOrg tbody").append(appendStr);
+	
+	populateAuthList();
 }
+
 function delOrg(ele) {
 	$(ele).closest('tr').remove();
 	// reset the row class
@@ -175,6 +169,26 @@ function delOrg(ele) {
 			
 			$(this).addClass(trClass);	
 		});
+
+	populateAuthList();
+}
+
+function populateAuthList() {
+	var arrObj = document.getElementsByName("orgId");
+	var arrOrgId = new Array()
+	for (i=0; i<arrObj.length; i++)
+		arrOrgId[i] = arrObj[i].value
+	$.ajax({
+		type: 'POST',
+		url: "${createLink(controller: 'user', action: 'ajaxAuthList')}",
+		data: {"orgId": JSON.stringify(arrOrgId)},
+		success:function(result){
+	    	$("#authList").html(result);
+	  	},
+	  	error:function(result) {
+			alert("Error!!")
+		}
+  	});
 }
 </script>
 

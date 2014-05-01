@@ -24,6 +24,7 @@
 						<td><g:message code='user.organization.label' default='Organization'/></td>
 						<td colspan="3">
 							<g:select name="org" from="${orgList}" noSelection="${['null':'-- Select --']}"
+									optionKey="name" optionValue="description"
 									onchange="${remoteFunction(controller: 'user',
 												action: 'ajaxGroupNames',
                   								update: [success: 'group-names'],

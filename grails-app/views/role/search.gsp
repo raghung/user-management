@@ -22,6 +22,7 @@
 				<td><g:message code='user.organization.label' default='Organization'/></td>
 				<td colspan="3">
 					<g:select name="org" from="${orgList}" noSelection="${['null':'-- Select --']}"
+								optionKey="name" optionValue="description"
 								onchange="${remoteFunction(controller: 'user',
 											action: 'ajaxGroupNames',
                								update: [success: 'group-names'],
@@ -36,7 +37,7 @@
                		<g:select name="groupName"
          						from="${grpList}"
          						optionKey="id"
-         						optionValue="groupName"
+         						optionValue="groupDescription"
          						noSelection="${['null': '-- Select --'] }"
          						value="${groupId}"/>
 			 	</span>
@@ -76,8 +77,8 @@ def queryParams = [org: org, group: groupName, authority: authority]
 		<tbody>
 		<g:each in="${results}" status="i" var="role">
 		<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-			<td>${fieldValue(bean: role, field: "organization.name")}</td>
-			<td>${fieldValue(bean: role, field: "organization.groupName")}</td>
+			<td>${fieldValue(bean: role, field: "organization.description")}</td>
+			<td>${fieldValue(bean: role, field: "organization.groupDescription")}</td>
 			<sec:access controller='role' action='edit'>
 			<td><g:link action="edit" id="${role.id}">${fieldValue(bean: role, field: "authority")}</g:link></td>
 			</sec:access>

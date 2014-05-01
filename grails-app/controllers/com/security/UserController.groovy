@@ -13,7 +13,7 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 	
 	def create() {
 		def user = lookupUserClass().newInstance(params)
-		[user: user, authorityList: sortedRoles(user), userType: UserType.findAll(), orgList: getOrganizations()]
+		[user: user, userType: UserType.findAll(), orgList: getOrganizations(), roleMap: sortedRoles(user), userRoles: []]
 	}
 
 	def save() {
@@ -35,7 +35,7 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		// Clear any pre-validated errors (sometime grails persists String errors on Date field)
 		user.clearErrors()
 		if (!user.save(flush: true)) {
-			render view: 'create', model: [user: user, authorityList: sortedRoles(user)]
+			render view: 'create', model: [user: user, userType: UserType.findAll(), orgList: getOrganizations(), roleMap: sortedRoles(user), userRoles: []]
 			return
 		}
 
@@ -122,10 +122,11 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 	}
 
 	protected List populateOrganization(User user) {
+		
 		def lst = params.list('orgId')
 		
 		// Patient is default organization
-		if (user.type == 'Patient') {
+		if (user && user.type == 'Patient') {
 			lst = []
 		}
 		
@@ -279,66 +280,78 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		render template: 'groupNames', model: [orgList: lstOrg]
 	}
 	
-	protected Map buildUserModel(User user) {
-
-		String authorityFieldName = SpringSecurityUtils.securityConfig.authority.nameField
-		String authoritiesPropertyName = SpringSecurityUtils.securityConfig.userLookup.authoritiesPropertyName
-
-		List roles = sortedRoles(user)
-		//Set userRoleNames = user[authoritiesPropertyName].collect { it[authorityFieldName] }
-		Set userRoles = user.getAuthorities()
-		def granted = [:]
-		def notGranted = [:]
-		for (role in roles) {
-			//String authority = role[authorityFieldName]
-			if (userRoles.contains(role)) {
-				granted[(role)] = true
-			}
-			else {
-				notGranted[(role)] = false
-			}
+	def ajaxAuthList() {
+		def orgIds = JSON.parse(params.orgId)
+		params['orgId'] = orgIds 
+		def user
+		def userRoles = []
+		// Editing User
+		if (params.id) {
+			user = User.findById(params.id)
+			user.organization = populateOrganization(user)
+			userRoles = user.getAuthorities()
 		}
 		
-		def roleMap = granted + notGranted
-		/*def grpMap = [:]
-		for (entry in roleMap) {
-			def org = entry.key.organization
-			grpMap.put(org.name + " - " + org.groupName, entry)
-		}*/
+		def roleMap = sortedRoles(user)
+		render template: 'authList', model: [roleMap: roleMap, userRoles: userRoles]
+	}
+	
+	protected Map buildUserModel(User user) {
+
+		Map roleMap = sortedRoles(user)
+		Set userRoles = user.getAuthorities()
 		
-		return [user: user, roleMap: roleMap, userType: UserType.findAll(), orgList: getOrganizations()]
+		return [user: user, roleMap: roleMap, userRoles: userRoles, userType: UserType.findAll(), orgList: getOrganizations()]
 	}
 	
 	static List getOrganizations() {
-		def criteria = Organization.createCriteria()
-		
-		return criteria.list {
+		def lstNames = Organization.createCriteria().list {
 			projections {
 				distinct("name")
 			}
 		}
+		
+		def lstOrg = []
+		for (name in lstNames) {
+			lstOrg += Organization.findByName(name)
+		}
+		
+		return lstOrg
 	}
 	
-	protected List sortedRoles(User user) {
+	protected Map sortedRoles(User user) {
 		def lstOrgs = []
-		for (org in user.organization) {
-			lstOrgs += org.name + "|" + org.groupName
+		def userOrgs = []
+		
+		// Organizations already exists
+		if (user && user.organization) {
+			userOrgs = user.organization
+		} else {
+			userOrgs = populateOrganization(user)
 		}
+		
+		for (org in userOrgs) {
+			lstOrgs += org.description + "|" + org.groupDescription
+		}
+
 		def setOrgs = lstOrgs as Set
+		def mapRoles = [:]
 		def lstRoles = []
 		for (org in setOrgs) {
 			def split = org.tokenize("|")
-			lstRoles += lookupRoleClass().createCriteria().list() {
+			lstRoles = lookupRoleClass().createCriteria().list() {
 				organization {
 					and {
-						eq("name", "${split[0]}")
-						eq("groupName", "${split[1]}" )
+						eq("description", "${split[0]}")
+						eq("groupDescription", "${split[1]}" )
 					}
 				}
 				order("authority", "asc")
 			}
+			def key = split[0] + " - " + split[1]
+			mapRoles[key] = lstRoles
 		}
-		return lstRoles
+		return mapRoles
 	}
 	 
 }

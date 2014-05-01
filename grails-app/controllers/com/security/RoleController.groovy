@@ -13,10 +13,16 @@ class RoleController extends grails.plugin.springsecurity.ui.RoleController {
 	def save() {
 		def role = lookupRoleClass().newInstance(params)
 		role.organization = Organization.findById(params.long('groupName'))
+		if (params.authority) {
+			def authority = params.authority.toUpperCase()
+			def prefix = role.organization.name + "_" + role.organization.groupName
+			role.authority = authority.indexOf(prefix) == 0? authority : prefix.toUpperCase() + "_" + authority  
+		}
 
 		role.clearErrors()
 		if (!role.save(flush: true)) {
-			render view: 'create', model: [role: role]
+			flash.message = "Error creating Role"
+			render view: 'create', model: [role: role, orgList: UserController.getOrganizations()]
 			return
 		}
 
@@ -55,8 +61,15 @@ class RoleController extends grails.plugin.springsecurity.ui.RoleController {
 
 		// Add organization
 		role.organization = Organization.findById(params.long('groupName'))
+		if (params.authority) {
+			def authority = params.authority.toUpperCase()
+			def prefix = role.organization.name + "_" + role.organization.groupName
+			authority = authority.indexOf(prefix) == 0? authority : prefix.toUpperCase() + "_" + authority
+			params['authority'] = authority
+		}
 
 		if (!springSecurityService.updateRole(role, params)) {
+			flash.message = "Error updating Role"
 			render view: 'edit', model: [role: role]
 			return
 		}

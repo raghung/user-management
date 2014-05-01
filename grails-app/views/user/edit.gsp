@@ -103,6 +103,7 @@ if (isOpenId) {
 	<s2ui:tab name='organization' height='275'>
 		<div>
 			Organization: <g:select name="org" from="${orgList}" noSelection="${['null':'-- Select --']}"
+									optionKey="name" optionValue="description"
 									onchange="${remoteFunction(controller: 'user',
 												action: 'ajaxGroupNames',
                   								update: [success: 'group-names'],
@@ -125,8 +126,8 @@ if (isOpenId) {
 				<tbody>
 				<g:each in="${user.organization}" status="i" var="org">
 				<tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
-					<td>${org.name}<g:hiddenField name="orgId" value="${org.id}"/></td>
-					<td>${org.groupName}</td>
+					<td>${org.description}<g:hiddenField name="orgId" value="${org.id}"/></td>
+					<td>${org.groupDescription}</td>
 					<td>
 						<g:if test="${org.name != 'Default'}">
 						<img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/>
@@ -140,21 +141,13 @@ if (isOpenId) {
 	</s2ui:tab>
 	
 	<s2ui:tab name='roles' height='275'>
-		<g:each var="entry" in="${roleMap}">
-		<div>
-			<g:checkBox name="userRole" value="${entry.key.id}" checked="${entry.value}"/>
-			<g:link controller='role' action='edit' id='${entry.key.id}'>${entry.key.authority.encodeAsHTML()}</g:link>
+		<div id="authList">
+			<g:render template="authList" model="[roleMap: roleMap, userRoles: userRoles]" />
 		</div>
-		</g:each>
 	</s2ui:tab>
 	
 	<s2ui:tab name='contactinfo' height='275'>
-		<g:each var="entry" in="${roleMap}">
-		<div>
-			<g:checkBox name="${entry.key.authority}" value="${entry.value}"/>
-			<g:link controller='role' action='edit' id='${entry.key.id}'>${entry.key.authority.encodeAsHTML()}</g:link>
-		</div>
-		</g:each>
+		Contact Information
 	</s2ui:tab>
 
 	<g:if test='${isOpenId}'>
@@ -226,6 +219,7 @@ $(document).ready(function() {
           });*/
 		 	
 });
+
 function addOrg() {
 	var org = $("#org").val();
 	var orgId = $("#groupName").val();
@@ -255,6 +249,8 @@ function addOrg() {
 		appendStr = appendStr + '<td><img src="${fam.icon(name: 'delete')}" onclick="delOrg(this)"/></td></tr>';
 
 	$("#tblOrg tbody").append(appendStr);
+	
+	populateAuthList();
 }
 
 function delOrg(ele) {
@@ -268,9 +264,31 @@ function delOrg(ele) {
 			
 			$(this).addClass(trClass);	
 		});
+
+	populateAuthList();
+}
+
+function populateAuthList() {
+	var arrObj = document.getElementsByName("orgId");
+	var arrOrgId = new Array()
+	for (i=0; i<arrObj.length; i++)
+		arrOrgId[i] = arrObj[i].value
+	$.ajax({
+		type: 'POST',
+		url: "${createLink(controller: 'user', action: 'ajaxAuthList')}",
+		data: {
+			"id": ${user?.id},
+			"orgId": JSON.stringify(arrOrgId)
+			},
+		success:function(result){
+	    	$("#authList").html(result);
+	  	},
+	  	error:function(result) {
+			alert("Error!!")
+		}
+  	});
 }
 
 </script>
-
 </body>
 </html>

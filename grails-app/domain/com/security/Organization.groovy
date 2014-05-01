@@ -38,7 +38,7 @@ class Organization implements Serializable {
 		// Composite primary key
 		id composite: ['name', 'groupName']
 		
-		description nullable: true
-		groupDescription nullable: true
+		description blank: false
+		groupDescription blank: false
     }
 }

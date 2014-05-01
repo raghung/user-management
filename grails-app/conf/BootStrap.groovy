@@ -8,10 +8,9 @@ import com.security.UserType;
 class BootStrap {
 
     def init = { servletContext ->
-		def common = new Organization(name: 'Default', groupName: 'Default').save(flush: true, failOnError: true)
-		def kekh = new Organization(name: 'USC', groupName: 'USC KEKH').save(flush: true, failOnError: true)
-		def cancer = new Organization(name: 'USC', groupName: 'USC Cancer').save(flush: true, failOnError: true)
-		def derm = new Organization(name: 'USC', groupName: 'USC Dermatology').save(flush: true, failOnError: true)
+		def common = new Organization(name: 'Default', description: 'Default', groupName: 'Default', groupDescription: 'Default').save(flush: true, failOnError: true)
+		def kekh = new Organization(name: 'USC', description: 'USC', groupName: 'KEKH', groupDescription: 'KEKH school of medicine').save(flush: true, failOnError: true)
+		def cancer = new Organization(name: 'USC', description: 'USC', groupName: 'CRESCH', groupDescription: 'Cancer research center').save(flush: true, failOnError: true)
 		
 		def adminRole = Role.findByAuthority("ROLE_ADMIN")?: new Role(authority: 'ROLE_ADMIN', organization: common).save(flush: true)
 		def doctorRole = Role.findByAuthority("ROLE_DOCTOR")?: new Role(authority: 'ROLE_DOCTOR', organization: common).save(flush: true)
