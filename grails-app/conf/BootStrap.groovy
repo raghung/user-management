@@ -74,6 +74,7 @@ class BootStrap {
 		new Requestmap(url: '/userType/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
 		new Requestmap(url: '/securityQuestions/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
 		new Requestmap(url: '/organization/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
+		new Requestmap(url: '/adminManage/**', configAttribute: 'ROLE_ADMIN').save(flush: true)
 		
 		new UserType(name: 'Admin', description: 'Admin').save(flush: true, failOnError: true)
 		new UserType(name: 'Patient', description: 'Patient').save(flush: true, failOnError: true)

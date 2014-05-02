@@ -2,7 +2,7 @@ package com.security
 
 class UserAuditTrail {
 
-	//static mapWith = "mongo"
+	static mapWith = "mongo"
 	
 	String id
 	

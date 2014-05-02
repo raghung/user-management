@@ -17,7 +17,7 @@ grails.project.dependency.resolution = {
         // specify dependency exclusions here; for example, uncomment this to disable ehcache:
         // excludes 'ehcache'
     }
-    log "error" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
+    log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     checksums true // Whether to verify checksums on resolve
     legacyResolve false // whether to do a secondary resolve on plugin installation, not advised and here for backwards compatibility
 
@@ -53,6 +53,11 @@ grails.project.dependency.resolution = {
 		compile ":jquery-ui:1.10.3"
 		compile ":famfamfam:1.0.1"
 		compile ":spring-security-ui:1.0-RC1"
+		compile ":mongodb:1.3.3"
+		
+		compile (":app-info:1.1.1" ){
+			excludes 'jquery'
+		}
 		
 		runtime ":hibernate:$grailsVersion"
 		//runtime ":jquery:1.8.3"

@@ -10,6 +10,7 @@ import grails.util.GrailsNameUtils;
 
 class UserController extends grails.plugin.springsecurity.ui.UserController {
 	def springSecurityService
+	def scopesInfoService
 	
 	def create() {
 		def user = lookupUserClass().newInstance(params)
@@ -152,6 +153,14 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 	}
 	
 	def search() {
+		def lst = scopesInfoService.getSessionsInfo()
+		
+		for (obj in lst) {
+			def objSession = obj.session
+			def attr = objSession.getAttributeNames()
+			def spring = objSession.getAttribute("SPRING_SECURITY_CONTEXT")
+			println attr
+		}
 		def searched = params.searched
 		if (params.searched == null) {
 			render view: 'search', model:[userType: UserType.findAll(), enabled: 0, accountExpired: 0, accountLocked: 0, passwordExpired: 0, searched: false]
