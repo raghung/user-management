@@ -58,6 +58,7 @@ grails.project.dependency.resolution = {
 		compile (":app-info:1.1.1" ){
 			excludes 'jquery'
 		}
+		compile ":spring-mobile:0.5.1"
 		
 		runtime ":hibernate:$grailsVersion"
 		//runtime ":jquery:1.8.3"
