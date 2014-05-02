@@ -65,7 +65,7 @@ class User {
 
 	static constraints = {
 		username email: true, blank: false, unique: true
-		password blank: false
+		password blank: false, validator: RegisterController.passwordValidator
 		firstname blank: false
 		lastname blank: false
 		type blank: false

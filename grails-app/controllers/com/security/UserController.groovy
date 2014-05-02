@@ -107,7 +107,7 @@ class UserController extends grails.plugin.springsecurity.ui.UserController {
 		// Clear any pre-validated errors (sometime grails persists String errors on Date field)
 		user.clearErrors()
 		
-		if (!user.save(flush: true, failOnError: true)) {
+		if (!user.save(flush: true)) {
 			render view: 'edit', model: buildUserModel(user)
 			return
 		}

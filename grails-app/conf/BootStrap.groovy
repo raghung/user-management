@@ -17,12 +17,12 @@ class BootStrap {
 		def staffRole = Role.findByAuthority("ROLE_STAFF")?: new Role(authority: 'ROLE_STAFF', organization: common).save(flush: true)
 		def patientRole = Role.findByAuthority("ROLE_PATIENT")?: new Role(authority: 'ROLE_PATIENT', organization: common).save(flush: true)
   
-		def testUser = new User(username: 'admin@onehaystack.com', password: 'admin', 
+		def testUser = new User(username: 'admin@onehaystack.com', password: 'Admin@fm1', 
 								firstname: 'Roger', lastname: 'Federer', type: 'Admin',
 								birthDate: new GregorianCalendar(1981, 4, 13).getTime(),
 								identification: '123121234', createUser: 1, lastUpdtUser: 1,
 								organization: [common]).save(flush: true, failOnError: true)
-		def testUser1 = new User(username: 'doctor@onehaystack.com', password: 'doctor',
+		def testUser1 = new User(username: 'doctor@onehaystack.com', password: 'Doctor@fm1',
 									firstname: 'Rafael', lastname: 'Nadal', type: 'Doctor',
 									birthDate: new GregorianCalendar(1983, 8, 22).getTime(),
 									identification: '23456789', createUser: 1, lastUpdtUser: 1,
